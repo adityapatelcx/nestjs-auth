@@ -10,4 +10,13 @@ export class AuthService {
       user: req.user,
     };
   }
+
+  twitterLogin(req) {
+    if (!req.user) return 'No user from twitter';
+
+    return {
+      message: 'User information from twitter',
+      user: req.user,
+    };
+  }
 }
