@@ -1,1 +1,1 @@
-export * from './google.guard';
+export * from './google-oauth.guard';

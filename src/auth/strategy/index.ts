@@ -1,1 +1,1 @@
-export * from './google.strategy';
+export * from './google-oauth.strategy';
