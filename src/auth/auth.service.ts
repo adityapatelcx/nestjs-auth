@@ -11,11 +11,11 @@ export class AuthService {
     };
   }
 
-  twitterLogin(req) {
-    if (!req.user) return 'No user from twitter';
+  facebookLogin(req) {
+    if (!req.user) return 'No user from facebook';
 
     return {
-      message: 'User information from twitter',
+      message: 'User information from facebook',
       user: req.user,
     };
   }
