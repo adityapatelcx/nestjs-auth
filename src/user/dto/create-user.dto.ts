@@ -9,6 +9,14 @@ import {
 
 export class CreateUserDto {
   @IsString()
+  @IsOptional()
+  provider?: string;
+
+  @IsString()
+  @IsOptional()
+  providerId?: string;
+
+  @IsString()
   @MaxLength(30)
   @IsNotEmpty()
   @IsOptional()
@@ -28,8 +36,9 @@ export class CreateUserDto {
   @IsString()
   @MinLength(4)
   @MaxLength(32)
+  @IsOptional()
   @IsNotEmpty()
-  password: string;
+  password?: string;
 
   @IsNumber()
   @MaxLength(4)
