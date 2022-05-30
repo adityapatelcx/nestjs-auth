@@ -1,45 +1,128 @@
-import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { AuthCredentialsDto } from './dto';
+import { UserJwtPayload } from './interface';
+import * as bcryptjs from 'bcryptjs';
+import { IUser } from 'src/user/user.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
+    private userService: UserService,
     private jwtService: JwtService,
   ) {}
 
-  googleLogin(req) {
-    if (!req.user) return 'No user from google';
+  async googleLogin(
+    authCredentialsDto: AuthCredentialsDto,
+  ): Promise<{ access_token: string; userAlreadyExists: boolean }> {
+    if (!authCredentialsDto.email)
+      throw new NotFoundException(
+        'User not found with google OAuth, Please signup first',
+      );
 
-    return {
-      message: 'User information from google',
-      user: req.user,
-    };
-  }
+    const existingUser: IUser = await this.userService.getUserByEmail(
+      authCredentialsDto.email,
+    );
 
-  facebookLogin(req) {
-    if (!req.user) return 'No user from facebook';
-
-    return {
-      message: 'User information from facebook',
-      user: req.user,
-    };
-  }
-
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne(username);
-    if (user && user.password === pass) {
-      const { password, ...result } = user;
-      return result;
+    if (existingUser) {
+      const { access_token } = await this.signin(authCredentialsDto);
+      return { access_token, userAlreadyExists: true };
     }
-    return null;
+
+    const { access_token } = await this.signup(authCredentialsDto);
+    return { access_token, userAlreadyExists: false };
   }
 
-  async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
-    return {
-      access_token: this.jwtService.sign(payload),
+  async facebookLogin(
+    authCredentialsDto: AuthCredentialsDto,
+  ): Promise<{ access_token: string; userAlreadyExists: boolean }> {
+    if (!authCredentialsDto.email)
+      throw new NotFoundException(
+        'User not found with facebook OAuth, Please signup first',
+      );
+
+    const existingUser: IUser = await this.userService.getUserByEmail(
+      authCredentialsDto.email,
+    );
+
+    if (existingUser) {
+      const { access_token } = await this.signin(authCredentialsDto);
+      return { access_token, userAlreadyExists: true };
+    }
+
+    const { access_token } = await this.signup(authCredentialsDto);
+    return { access_token, userAlreadyExists: false };
+  }
+
+  async signup(
+    authCredentialsDto: AuthCredentialsDto,
+  ): Promise<{ access_token: string }> {
+    const {
+      email,
+      first_name,
+      last_name = '',
+      master_pin = 0,
+    } = authCredentialsDto;
+
+    const existingUser: IUser = await this.userService.getUserByEmail(email);
+
+    if (existingUser)
+      throw new ConflictException('User already exist, Please signin');
+
+    await this.userService.createUser(authCredentialsDto);
+
+    const payload: UserJwtPayload = {
+      email,
+      first_name,
+      last_name,
+      master_pin,
     };
+
+    const access_token: string = this.jwtService.sign(payload);
+
+    return { access_token };
+  }
+
+  async signin(
+    authCredentialsDto: AuthCredentialsDto,
+  ): Promise<{ access_token: string }> {
+    const {
+      password,
+      email,
+      first_name,
+      last_name = '',
+      master_pin = 0,
+    } = authCredentialsDto;
+
+    const user = await this.userService.getUserByEmail(email);
+
+    if (!user)
+      throw new NotFoundException('User not found, Please signup first');
+
+    if (!authCredentialsDto.provider) {
+      const savedHash: string = await this.userService.getUserHash(email);
+
+      const doPasswordMatch = bcryptjs.compareSync(password, savedHash);
+
+      if (!doPasswordMatch)
+        throw new UnauthorizedException('Incorrect login credentials!');
+    }
+
+    const payload: UserJwtPayload = {
+      email,
+      first_name,
+      last_name,
+      master_pin,
+    };
+
+    const access_token: string = this.jwtService.sign(payload);
+
+    return { access_token };
   }
 }
