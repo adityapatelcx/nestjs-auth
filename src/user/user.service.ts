@@ -5,8 +5,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model } from 'mongoose';
-import { CreateUserDto, UpdateUserDto } from './dto';
+import { Model } from 'mongoose';
+import { CreateUserDto } from './dto';
 import { IUser } from './user.interface';
 import * as bcryptjs from 'bcryptjs';
 
@@ -41,81 +41,17 @@ export class UserService {
     }
   }
 
-  async updateUser(
-    userId: string,
-    updateUserDto: UpdateUserDto,
-  ): Promise<IUser> {
-    try {
-      const isValidObjectId = mongoose.isValidObjectId(userId);
-
-      if (!isValidObjectId)
-        throw new BadRequestException('Please check input userId');
-
-      if (updateUserDto?.password) {
-        const salt = bcryptjs.genSaltSync(10);
-
-        const hashedPassword = bcryptjs.hashSync(updateUserDto.password, salt);
-
-        updateUserDto.password = hashedPassword;
-      }
-
-      const existingUser = await this.userModel
-        .findByIdAndUpdate(userId, updateUserDto, { new: true })
-        .select('-password');
-
-      if (!existingUser) {
-        throw new NotFoundException(`User #${userId} not found`);
-      }
-
-      return existingUser;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async getAllUsers(): Promise<IUser[]> {
-    const userData = await this.userModel.find().select('-password');
-
-    if (!userData || userData.length == 0) {
-      throw new NotFoundException('Users data not found!');
-    }
-
-    return userData;
-  }
-
-  async getUser(userId: string): Promise<IUser> {
-    const isValidObjectId = mongoose.isValidObjectId(userId);
-
-    if (!isValidObjectId)
-      throw new BadRequestException('Please check input userId');
-
+  async getUser(createUserDto: CreateUserDto): Promise<IUser> {
     const existingUser = await this.userModel
-      .findById(userId)
+      .findOne({ email: createUserDto.email })
       .select('-password')
       .exec();
 
     if (!existingUser) {
-      throw new NotFoundException(`User #${userId} not found`);
+      throw new NotFoundException(`User not found`);
     }
 
     return existingUser;
-  }
-
-  async deleteUser(userId: string): Promise<IUser> {
-    const isValidObjectId = mongoose.isValidObjectId(userId);
-
-    if (!isValidObjectId)
-      throw new BadRequestException('Please check input userId');
-
-    const deletedUser = await this.userModel
-      .findByIdAndDelete(userId)
-      .select('-password');
-
-    if (!deletedUser) {
-      throw new NotFoundException(`User #${userId} not found`);
-    }
-
-    return deletedUser;
   }
 
   async getUserByEmail(email: string): Promise<IUser> {
