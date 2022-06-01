@@ -1,20 +1,18 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpStatus,
-  Param,
   Post,
-  Put,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth';
-import { CreateUserDto, UpdateUserDto } from './dto';
+import { CreateUserDto } from './dto';
 import { UserService } from './user.service';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -36,67 +34,15 @@ export class UserController {
     }
   }
 
-  @Put(':id')
+  @Get('')
   @UseGuards(JwtAuthGuard)
-  async updateUser(
-    @Res() response,
-    @Param('id') userId: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
+  async getUser(@Res() response, @Req() request) {
     try {
-      const existingUser = await this.userService.updateUser(
-        userId,
-        updateUserDto,
-      );
-
-      return response.status(HttpStatus.OK).json({
-        message: 'User has been successfully updated',
-        existingUser,
-      });
-    } catch (error) {
-      return response.status(error.status).json(error.response);
-    }
-  }
-
-  @Get()
-  @UseGuards(JwtAuthGuard)
-  async getUsers(@Res() response) {
-    try {
-      const userData = await this.userService.getAllUsers();
-
-      return response.status(HttpStatus.OK).json({
-        message: 'All users data found successfully',
-        userData,
-      });
-    } catch (error) {
-      return response.status(error.status).json(error.response);
-    }
-  }
-
-  @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  async getUser(@Res() response, @Param('id') userId: string) {
-    try {
-      const existingUser = await this.userService.getUser(userId);
+      const existingUser = await this.userService.getUser(request.user);
 
       return response.status(HttpStatus.OK).json({
         message: 'User found successfully',
         existingUser,
-      });
-    } catch (error) {
-      return response.status(error.status).json(error.response);
-    }
-  }
-
-  @Delete(':id')
-  @UseGuards(JwtAuthGuard)
-  async deleteUser(@Res() response, @Param('id') userId: string) {
-    try {
-      const deletedUser = await this.userService.deleteUser(userId);
-
-      return response.status(HttpStatus.OK).json({
-        message: 'User deleted successfully',
-        deletedUser,
       });
     } catch (error) {
       return response.status(error.status).json(error.response);
