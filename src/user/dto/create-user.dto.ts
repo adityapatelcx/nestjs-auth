@@ -1,9 +1,12 @@
 import {
+  IsEmail,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
+  Max,
   MaxLength,
+  Min,
   MinLength,
 } from 'class-validator';
 
@@ -27,7 +30,7 @@ export class CreateUserDto {
   @IsOptional()
   last_name?: string;
 
-  @IsString()
+  @IsEmail()
   @MinLength(4)
   @MaxLength(20)
   @IsNotEmpty()
@@ -41,8 +44,8 @@ export class CreateUserDto {
   password?: string;
 
   @IsNumber()
-  @MaxLength(4)
-  @MinLength(4)
+  @Min(1000000)
+  @Max(9999999)
   @IsOptional()
   master_pin?: number;
 }
