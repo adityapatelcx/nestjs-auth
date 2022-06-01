@@ -45,7 +45,7 @@ export class AuthController {
         authCredentialsDto,
       );
 
-      return response.status(HttpStatus.CREATED).json({
+      return response.status(HttpStatus.OK).json({
         message: 'User has been signed in',
         access_token,
       });
