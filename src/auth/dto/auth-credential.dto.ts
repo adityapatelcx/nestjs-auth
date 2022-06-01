@@ -1,9 +1,12 @@
 import {
+  IsEmail,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
+  Max,
   MaxLength,
+  Min,
   MinLength,
 } from 'class-validator';
 
@@ -18,6 +21,7 @@ export class AuthCredentialsDto {
 
   @IsString()
   @MaxLength(30)
+  @IsNotEmpty()
   @IsOptional()
   first_name?: string;
 
@@ -26,7 +30,7 @@ export class AuthCredentialsDto {
   @IsOptional()
   last_name?: string;
 
-  @IsString()
+  @IsEmail()
   @MinLength(4)
   @MaxLength(20)
   @IsNotEmpty()
@@ -40,8 +44,8 @@ export class AuthCredentialsDto {
   password?: string;
 
   @IsNumber()
-  @MinLength(4)
-  @MaxLength(4)
+  @Min(1000000)
+  @Max(9999999)
   @IsOptional()
   master_pin?: number;
 }
