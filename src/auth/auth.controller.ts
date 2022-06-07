@@ -1,6 +1,6 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { GoogleOAuthGuard } from './guard';
+import { FacebookOAuthGuard, GoogleOAuthGuard } from './guard';
 
 @Controller('auth')
 export class AuthController {
@@ -16,5 +16,17 @@ export class AuthController {
   @UseGuards(GoogleOAuthGuard)
   googleAuthRedirect(@Req() req) {
     return this.authService.googleLogin(req);
+  }
+
+  @Get('facebook')
+  @UseGuards(FacebookOAuthGuard)
+  async facebookAuth(@Req() req) {
+    // Guard redirects
+  }
+
+  @Get('facebook/redirect')
+  @UseGuards(FacebookOAuthGuard)
+  facebookAuthRedirect(@Req() req) {
+    return this.authService.facebookLogin(req);
   }
 }
