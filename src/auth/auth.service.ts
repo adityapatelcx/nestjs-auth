@@ -111,7 +111,7 @@ export class AuthService {
       const doPasswordMatch = bcryptjs.compareSync(password, savedHash);
 
       if (!doPasswordMatch)
-        throw new UnauthorizedException('Incorrect login credentials!');
+        throw new UnauthorizedException('Incorrect login credentials');
     }
 
     const payload: UserJwtPayload = {
