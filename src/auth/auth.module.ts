@@ -10,6 +10,8 @@ import {
 import { UserModule } from '../user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
+import { BlacklistSchema } from './schema/blacklist.schema';
 
 const jwtFactory = {
   useFactory: async (configService: ConfigService) => ({
@@ -22,7 +24,12 @@ const jwtFactory = {
 };
 
 @Module({
-  imports: [UserModule, PassportModule, JwtModule.registerAsync(jwtFactory)],
+  imports: [
+    UserModule,
+    PassportModule,
+    JwtModule.registerAsync(jwtFactory),
+    MongooseModule.forFeature([{ name: 'Blacklist', schema: BlacklistSchema }]),
+  ],
   providers: [
     AuthService,
     GoogleOAuthStrategy,
