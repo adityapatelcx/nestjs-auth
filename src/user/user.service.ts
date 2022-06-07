@@ -41,6 +41,19 @@ export class UserService {
     }
   }
 
+  async getUserById(id: string): Promise<IUser> {
+    const existingUser = await this.userModel
+      .findById(id)
+      .select('-password')
+      .exec();
+
+    if (!existingUser) {
+      throw new NotFoundException(`User not found`);
+    }
+
+    return existingUser;
+  }
+
   async getUser(createUserDto: CreateUserDto): Promise<IUser> {
     const existingUser = await this.userModel
       .findOne({ email: createUserDto.email })
@@ -74,5 +87,13 @@ export class UserService {
     }
 
     return existingUser.password;
+  }
+
+  async updateUser(
+    filter: Record<string, string>,
+    payload: Record<string, string>,
+    upsert?: boolean,
+  ): Promise<IUser> {
+    return this.userModel.findOneAndUpdate(filter, payload, { upsert });
   }
 }
