@@ -10,11 +10,13 @@ import {
   Req,
   Res,
   UseGuards,
+  Headers,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto';
 import { FacebookOAuthGuard, GoogleOAuthGuard } from './guard';
 import { UserService } from '../user';
+import { sendMail } from '../services/ses';
 
 @Controller('auth')
 export class AuthController {
@@ -125,6 +127,7 @@ export class AuthController {
   @HttpCode(200)
   async forgotPassword(
     @Body() { email }: { email: string },
+    @Headers('origin') origin: string,
   ): Promise<{ message: string }> {
     const user = await this.userService.getUserByEmail(email);
 
@@ -137,10 +140,16 @@ export class AuthController {
 
     const access_token = await this.authService.getAccessToken({
       _id: user?._id,
+      purpose: 'PWD_RST', // Password Reset purpose code, this is used to differentiate between the token we provide for auth and reset password.
     });
 
-    // TODO
-    // Send email
+    const params = {
+      to: email,
+      body: `Click on this link to reset your password, ${origin}/auth/reset/${access_token}`,
+      subject: 'Reset Your Elysium Password',
+    };
+
+    await sendMail(params);
 
     return {
       message: `Password reset procedure has been sent to you email, please check your inbox.`,
@@ -167,6 +176,10 @@ export class AuthController {
 
     if (!decodeToken.status) {
       throw new HttpException(decodeToken.message, HttpStatus.BAD_REQUEST);
+    }
+
+    if (decodeToken.data?.purpose !== 'PWD_RST') {
+      throw new HttpException('Invalid Request', HttpStatus.BAD_REQUEST);
     }
 
     const user = await this.userService.getUserById(decodeToken?.data?.id);

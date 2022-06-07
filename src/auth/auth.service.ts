@@ -37,6 +37,7 @@ export class AuthService {
         message: 'decode success',
         data: {
           id: verify?._id,
+          purpose: verify?.purpose,
         },
       };
     } catch (error) {
