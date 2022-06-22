@@ -15,7 +15,7 @@ export class MintController {
   @UseInterceptors(FilesInterceptor('image', 7))
   async uploadMultipleFiles(
     @UploadedFiles() files,
-    @Body() { NFTdescription }: mintDTO,
+    @Body() { metadata }: mintDTO,
   ) {
     const images: string[] = [];
 
@@ -24,8 +24,8 @@ export class MintController {
       images.push(result.data.IpfsHash);
     }
 
-    const metadata = { ...JSON.parse(NFTdescription), images };
+    const data = { ...JSON.parse(metadata), images };
 
-    pinMetadataToIPFS(metadata);
+    await pinMetadataToIPFS(data);
   }
 }

@@ -1,5 +1,3 @@
-export class mintDTO{
-    NFTname: string;
-    NFTdescription : string;
-    NFTprimary:string;
+export class mintDTO {
+  metadata: string;
 }
