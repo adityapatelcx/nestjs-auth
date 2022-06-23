@@ -21,7 +21,6 @@ export class AuthCredentialsDto {
 
   @IsString()
   @MaxLength(30)
-  @IsNotEmpty()
   @IsOptional()
   first_name?: string;
 
@@ -32,13 +31,11 @@ export class AuthCredentialsDto {
 
   @IsEmail()
   @MinLength(4)
-  @MaxLength(20)
   @IsNotEmpty()
   email: string;
 
   @IsString()
   @MinLength(4)
-  @MaxLength(32)
   @IsOptional()
   @IsNotEmpty()
   password?: string;

@@ -80,15 +80,25 @@ export class AuthController {
         await this.authService.googleLogin(request.user);
 
       if (userAlreadyExists)
-        return response.status(HttpStatus.OK).json({
-          message: 'User has been signed in',
+        return response
+          .status(HttpStatus.OK)
+          .redirect(
+            `${process.env.CLIENT_SERVER_HOST}/google/redirect/${access_token}`,
+          )
+          .json({
+            message: 'User has been signed in',
+            access_token,
+          });
+
+      return response
+        .status(HttpStatus.CREATED)
+        .redirect(
+          `${process.env.CLIENT_SERVER_HOST}/google/redirect/${access_token}`,
+        )
+        .json({
+          message: 'User has been signed up',
           access_token,
         });
-
-      return response.status(HttpStatus.CREATED).json({
-        message: 'User has been signed up',
-        access_token,
-      });
     } catch (error) {
       return response.status(error.status).json(error.response);
     }
@@ -109,15 +119,25 @@ export class AuthController {
         await this.authService.facebookLogin(request.user);
 
       if (userAlreadyExists)
-        return response.status(HttpStatus.OK).json({
-          message: 'User has been signed in',
+        return response
+          .status(HttpStatus.OK)
+          .redirect(
+            `${process.env.CLIENT_SERVER_HOST}/facebook/redirect/${access_token}`,
+          )
+          .json({
+            message: 'User has been signed in',
+            access_token,
+          });
+
+      return response
+        .status(HttpStatus.CREATED)
+        .redirect(
+          `${process.env.CLIENT_SERVER_HOST}/facebook/redirect/${access_token}`,
+        )
+        .json({
+          message: 'User has been signed up',
           access_token,
         });
-
-      return response.status(HttpStatus.CREATED).json({
-        message: 'User has been signed up',
-        access_token,
-      });
     } catch (error) {
       return response.status(error.status).json(error.response);
     }
@@ -173,6 +193,8 @@ export class AuthController {
     }
 
     const decodeToken = await this.authService.decodeAccessToken(token);
+
+    console.log(decodeToken);
 
     if (!decodeToken.status) {
       throw new HttpException(decodeToken.message, HttpStatus.BAD_REQUEST);

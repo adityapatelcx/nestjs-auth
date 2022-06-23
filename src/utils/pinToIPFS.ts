@@ -1,8 +1,6 @@
 import axios from 'axios';
-// const FormData = require('form-data');
-import FormData from 'form-data';
-//This import statements gives error but is included to fix eslint error. Please comment this and uncomment the above
-//require statement while running the app
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const FormData = require('form-data');
 
 export const pinFileToIPFS = async (file: any) => {
   try {
@@ -17,9 +15,8 @@ export const pinFileToIPFS = async (file: any) => {
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
       headers: {
-        pinata_api_key: '83ae2edcb3432714c6f4',
-        pinata_secret_api_key:
-          '2f702fd98b2fbdda54d2fa6f60375a3db5b33878220a1b605ce9383a865259c0',
+        pinata_api_key: process.env.PINATA_API_KEY,
+        pinata_secret_api_key: process.env.PINATA_SECRET_API_KEY,
       },
     });
   } catch (err) {
@@ -40,8 +37,8 @@ export const pinMetadataToIPFS = async (metadata: any) => {
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
       headers: {
-        pinata_api_key: process.env.Pinata_api_key,
-        pinata_secret_api_key: process.env.Pinata_secret_api_key,
+        pinata_api_key: process.env.PINATA_API_KEY,
+        pinata_secret_api_key: process.env.PINATA_SECRET_API_KEY,
       },
     });
 

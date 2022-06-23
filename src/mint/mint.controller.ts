@@ -11,7 +11,7 @@ import { pinFileToIPFS, pinMetadataToIPFS } from 'src/utils/pinToIPFS';
 
 @Controller('mint')
 export class MintController {
-  @Post()
+  @Post('/')
   @UseInterceptors(FilesInterceptor('image', 7))
   async uploadMultipleFiles(
     @UploadedFiles() files,
