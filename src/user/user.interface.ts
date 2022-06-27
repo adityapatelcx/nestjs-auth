@@ -7,5 +7,6 @@ export interface IUser extends Document {
   password: string;
   master_pin?: number;
   provider?: string;
+  isEmailVerified?: boolean;
   comparePasswords?: (password: string) => boolean;
 }
