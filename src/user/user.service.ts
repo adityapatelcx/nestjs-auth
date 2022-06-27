@@ -20,7 +20,7 @@ export class UserService {
         .findOne({ email: createUserDto.email })
         .select('-password');
 
-      if (existingUser) throw new ConflictException('User already exist');
+      if (existingUser) throw new ConflictException('User already exists');
 
       if (!createUserDto.provider) {
         if (!createUserDto.password)
@@ -35,7 +35,11 @@ export class UserService {
 
       const newUser = new this.userModel(createUserDto);
 
-      return newUser.save();
+      const savedUser = await newUser.save();
+
+      delete savedUser.password;
+
+      return savedUser;
     } catch (error) {
       throw error;
     }
@@ -91,7 +95,7 @@ export class UserService {
 
   async updateUser(
     filter: Record<string, string>,
-    payload: Record<string, string>,
+    payload: Record<string, string> | Record<string, boolean>,
     upsert?: boolean,
   ): Promise<IUser> {
     return this.userModel.findOneAndUpdate(filter, payload, { upsert });
