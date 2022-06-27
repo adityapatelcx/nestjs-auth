@@ -12,7 +12,7 @@ export class FacebookOAuthStrategy extends PassportStrategy(
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
       callbackURL: process.env.FACEBOOK_CALLBACK_URL,
-      profileFields: ['id', 'name', 'emails', 'profileUrl'],
+      profileFields: ['id', 'name', 'emails'],
     });
   }
 
@@ -27,7 +27,7 @@ export class FacebookOAuthStrategy extends PassportStrategy(
     const user = {
       provider: 'facebook',
       providerId: id,
-      email: emails ? emails[0].value : id + '@facebook.com',
+      email: emails ? emails[0].value : null,
       first_name: name.givenName,
       last_name: name.familyName,
       accessToken,
