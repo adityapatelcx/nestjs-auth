@@ -2,12 +2,14 @@ import {
   Controller,
   Post,
   Body,
+  Res,
   UseInterceptors,
   UploadedFiles,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { mintDTO } from './dto/mint.dto';
 import { pinFileToIPFS, pinMetadataToIPFS } from 'src/utils/pinToIPFS';
+import { Response } from 'express';
 
 @Controller('mint')
 export class MintController {
@@ -16,16 +18,22 @@ export class MintController {
   async uploadMultipleFiles(
     @UploadedFiles() files,
     @Body() { metadata }: mintDTO,
+    @Res() res: Response,
   ) {
     const images: string[] = [];
+    const IpfsHash = [];
 
     for (const file of files) {
       const result = await pinFileToIPFS(file);
-      images.push(result.data.IpfsHash);
+      images.push(`ipfs://${result.data.IpfsHash}`);
     }
 
-    const data = { ...JSON.parse(metadata), images };
-
-    await pinMetadataToIPFS(data);
+    for (let index = 0; index < images.length; index++) {
+      const image = images[index];
+      const data = { ...JSON.parse(metadata), image };
+      const generateIpfsHash = await pinMetadataToIPFS(data);
+      IpfsHash.push(generateIpfsHash);
+    }
+    res.json(IpfsHash);
   }
 }
