@@ -136,7 +136,7 @@ export class AuthController {
   @UseGuards(FacebookOAuthGuard)
   async facebookAuthRedirect(@Req() request, @Res() response) {
     try {
-      if (request.user.email === null) {
+      if (request?.user?.email === null) {
         return response
           .status(HttpStatus.BAD_GATEWAY)
           .redirect(
@@ -197,9 +197,10 @@ export class AuthController {
 
       await sendMail(params);
 
-      return {
-        message: `Password reset procedure has been sent to you email, please check your inbox.`,
-      };
+      return response.status(HttpStatus.OK).json({
+        message:
+          'Password reset procedure has been sent to you email, please check your inbox.',
+      });
     } catch (error) {
       if (!error.status)
         return response.status(500).json({ message: error.message });
@@ -251,7 +252,9 @@ export class AuthController {
 
       await this.authService.blackListToken(token);
 
-      return { message: `Password reset successful` };
+      return response.status(HttpStatus.OK).json({
+        message: 'Password reset successful',
+      });
     } catch (error) {
       if (!error.status)
         return response.status(500).json({ message: error.message });
