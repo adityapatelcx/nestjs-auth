@@ -11,7 +11,7 @@ import { UserModule } from '../user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { BlacklistSchema } from './schema/blacklist.schema';
+import { BlacklistSchema } from './schema';
 
 const jwtFactory = {
   useFactory: async (configService: ConfigService) => ({
