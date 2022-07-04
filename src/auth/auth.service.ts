@@ -48,87 +48,28 @@ export class AuthService {
     }
   }
 
-  async googleLogin(
-    authCredentialsDto: AuthCredentialsDto,
-  ): Promise<{ access_token: string; userAlreadyExists: boolean }> {
-    if (!authCredentialsDto.email)
-      throw new NotFoundException(
-        'User not found with google OAuth, Please signup first',
-      );
-
-    const existingUser: IUser = await this.userService.getUserByEmail(
-      authCredentialsDto.email,
-    );
-
-    if (existingUser) {
-      const { access_token } = await this.signin(authCredentialsDto);
-      return { access_token, userAlreadyExists: true };
-    }
-
-    const { access_token } = await this.signup(authCredentialsDto);
-    return { access_token, userAlreadyExists: false };
-  }
-
-  async facebookLogin(
-    authCredentialsDto: AuthCredentialsDto,
-  ): Promise<{ access_token: string; userAlreadyExists: boolean }> {
-    if (!authCredentialsDto.email)
-      throw new NotFoundException(
-        'User not found with facebook OAuth, Please signup first',
-      );
-
-    const existingUser: IUser = await this.userService.getUserByEmail(
-      authCredentialsDto.email,
-    );
-
-    if (existingUser) {
-      const { access_token } = await this.signin(authCredentialsDto);
-      return { access_token, userAlreadyExists: true };
-    }
-
-    const { access_token } = await this.signup(authCredentialsDto);
-    return { access_token, userAlreadyExists: false };
-  }
-
   async signup(
     authCredentialsDto: AuthCredentialsDto,
-  ): Promise<{ access_token: string }> {
-    const {
-      email,
-      first_name,
-      last_name = '',
-      master_pin = 0,
-    } = authCredentialsDto;
+  ): Promise<{ user: IUser }> {
+    try {
+      const { email } = authCredentialsDto;
 
-    const existingUser: IUser = await this.userService.getUserByEmail(email);
+      let user = await this.userService.getUserByEmail(email);
 
-    if (existingUser)
-      throw new ConflictException('User already exist, Please signin');
+      if (user) return { user };
 
-    await this.userService.createUser(authCredentialsDto);
+      user = await this.userService.createUser(authCredentialsDto);
 
-    const payload: UserJwtPayload = {
-      email,
-      first_name,
-      last_name,
-      master_pin,
-    };
-
-    const access_token: string = this.jwtService.sign(payload);
-
-    return { access_token };
+      return { user };
+    } catch (error) {
+      throw error;
+    }
   }
 
   async signin(
     authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ access_token: string }> {
-    const {
-      password,
-      email,
-      first_name,
-      last_name = '',
-      master_pin = 0,
-    } = authCredentialsDto;
+    const { password, email } = authCredentialsDto;
 
     const user = await this.userService.getUserByEmail(email);
 
@@ -146,9 +87,6 @@ export class AuthService {
 
     const payload: UserJwtPayload = {
       email,
-      first_name,
-      last_name,
-      master_pin,
     };
 
     const access_token: string = this.jwtService.sign(payload);

@@ -22,6 +22,9 @@ export class User {
   @Prop()
   master_pin?: number;
 
+  @Prop({ default: false })
+  isEmailVerified: boolean;
+
   comparePasswords;
 }
 

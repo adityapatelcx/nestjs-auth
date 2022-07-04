@@ -44,5 +44,6 @@ export class AuthCredentialsDto {
   @Min(1000000)
   @Max(9999999)
   @IsOptional()
+  @IsNotEmpty()
   master_pin?: number;
 }
