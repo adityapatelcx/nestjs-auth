@@ -18,7 +18,7 @@ export class MintController {
   async uploadMultipleFiles(
     @UploadedFiles() files,
     @Body() { metadata }: mintDTO,
-    @Res() res: Response,
+    @Res() response: Response,
   ) {
     const images: string[] = [];
     const IpfsHash = [];
@@ -34,6 +34,6 @@ export class MintController {
       const generateIpfsHash = await pinMetadataToIPFS(data);
       IpfsHash.push(generateIpfsHash);
     }
-    res.json(IpfsHash);
+    return response.json(IpfsHash);
   }
 }
