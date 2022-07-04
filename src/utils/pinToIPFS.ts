@@ -28,7 +28,7 @@ export const pinMetadataToIPFS = async (metadata: any) => {
   try {
     const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
     const data = new FormData();
-    data.append('file', JSON.stringify(metadata), metadata.NFTname);
+    data.append('file', JSON.stringify(metadata), metadata.name);
 
     const result = await axios({
       method: 'POST',
@@ -42,7 +42,7 @@ export const pinMetadataToIPFS = async (metadata: any) => {
       },
     });
 
-    console.log(result);
+    return result.data.IpfsHash;
   } catch (err) {
     console.log(err);
   }
