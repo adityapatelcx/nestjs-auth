@@ -1,5 +1,4 @@
 import {
-  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -9,9 +8,9 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthCredentialsDto } from './dto';
 import { UserJwtPayload } from './interface';
 import * as bcryptjs from 'bcryptjs';
-import { IUser } from 'src/user/user.interface';
-import { BlacklistDocument } from './schema/blacklist.schema';
-import { IBlacklist } from './interface/blacklist.interface';
+import { IUser } from 'src/user';
+import { BlacklistDocument } from './schema';
+import { IBlacklist } from './interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
