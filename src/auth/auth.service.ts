@@ -3,16 +3,18 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserService } from '../user';
+import { InjectModel } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
+
+import * as bcryptjs from 'bcryptjs';
+import { Model } from 'mongoose';
+
+import { UserService } from '../user';
 import { AuthCredentialsDto } from './dto';
 import { UserJwtPayload } from './interface';
-import * as bcryptjs from 'bcryptjs';
-import { IUser } from 'src/user';
+import { IUser } from '../user';
 import { BlacklistDocument } from './schema';
 import { IBlacklist } from './interface';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 
 @Injectable()
 export class AuthService {
