@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { DatabaseModule } from './database/database.module';
 import { MintModule } from './mint/mint.module';
 import { ActivityModule } from './activity/activity.module';
+import { NftModule } from './nft/nft.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ActivityModule } from './activity/activity.module';
     DatabaseModule,
     MintModule,
     ActivityModule,
+    NftModule,
   ],
 })
 export class AppModule {}
