@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './auth/auth.module';
+import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule } from '@nestjs/config';
+
+import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { DatabaseModule } from './database/database.module';
-import { MintController } from './mint/mint.controller';
 import { MintModule } from './mint/mint.module';
-import { MulterModule } from '@nestjs/platform-express';
+import { ActivityModule } from './activity/activity.module';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { MulterModule } from '@nestjs/platform-express';
     UserModule,
     DatabaseModule,
     MintModule,
+    ActivityModule,
   ],
-  controllers: [MintController],
 })
 export class AppModule {}
