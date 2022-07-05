@@ -49,4 +49,34 @@ export class NftController {
       return response.status(error.status).json(error.response);
     }
   }
+
+  @Get('/:id')
+  async getNft(
+    @Req() request,
+    @Res() response,
+    @Param('id') id,
+  ): Promise<INft> {
+    try {
+      return response.status(HttpStatus.OK).json({
+        name: 'Wayfarer Classic',
+        description: 'created to test',
+        id: '#123',
+        rarity: '#9a72da',
+        collectionName: 'example',
+        schemaName: 'example',
+        templateId: '#00700966',
+        tradeId: '#00009',
+        attributes: [
+          'background color black',
+          'eye ball white',
+          'eye color pink',
+        ],
+      });
+    } catch (error) {
+      if (!error.status)
+        return response.status(500).json({ message: error.message });
+
+      return response.status(error.status).json(error.response);
+    }
+  }
 }
