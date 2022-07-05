@@ -5,10 +5,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+
+import * as bcryptjs from 'bcryptjs';
 import { Model } from 'mongoose';
+
 import { CreateUserDto } from './dto';
 import { IUser } from './user.interface';
-import * as bcryptjs from 'bcryptjs';
 
 @Injectable()
 export class UserService {

@@ -8,6 +8,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+
 import { JwtAuthGuard } from '../auth';
 import { CreateUserDto } from './dto';
 import { UserService } from './user.service';
@@ -16,7 +17,7 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
+  @Post('/')
   async createUser(@Res() response, @Body() createUserDto: CreateUserDto) {
     try {
       const newUser = (
@@ -30,11 +31,14 @@ export class UserController {
         newUser,
       });
     } catch (error) {
+      if (!error.status)
+        return response.status(500).json({ message: error.message });
+
       return response.status(error.status).json(error.response);
     }
   }
 
-  @Get('')
+  @Get('/')
   @UseGuards(JwtAuthGuard)
   async getUser(@Res() response, @Req() request) {
     try {
@@ -45,6 +49,9 @@ export class UserController {
         existingUser,
       });
     } catch (error) {
+      if (!error.status)
+        return response.status(500).json({ message: error.message });
+
       return response.status(error.status).json(error.response);
     }
   }
