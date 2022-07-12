@@ -58,19 +58,10 @@ export class NftController {
   ): Promise<INft> {
     try {
       return response.status(HttpStatus.OK).json({
-        name: 'Wayfarer Classic',
-        description: 'created to test',
-        id: '#123',
-        rarity: '#9a72da',
-        collectionName: 'example',
-        schemaName: 'example',
-        templateId: '#00700966',
-        tradeId: '#00009',
-        attributes: [
-          'background color black',
-          'eye ball white',
-          'eye color pink',
-        ],
+        name: 'Arch',
+        description: 'Arch',
+        primary: '',
+        image: 'ipfs://QmeaGbzWR4c3FHvVxKYrhKcAN4bUsAUvToEmAMion2vHKS',
       });
     } catch (error) {
       if (!error.status)
